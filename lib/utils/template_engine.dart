@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:path/path.dart' as path;
 import 'path_resolver.dart';
 
 String renderTemplate(String templatePath, Map<String, String> vars) {
