@@ -1,6 +1,6 @@
+import 'package:clean_arch_gen/generators/feature_generator.dart';
+import 'package:clean_arch_gen/internals/config.dart';
 import 'package:test/test.dart';
-import 'package:arch_gen/generators/feature_generator.dart';
-import 'package:arch_gen/internals/config.dart';
 import 'dart:io';
 
 void main() {
@@ -9,20 +9,15 @@ void main() {
     late String originalWorkingDir;
 
     setUp(() {
-      // Save original working directory
       originalWorkingDir = Directory.current.path;
 
-      // Create a temporary Flutter-like project structure
       tempProject = Directory.systemTemp.createTempSync();
 
-      // Navigate to temp project
       Directory.current = tempProject.path;
 
-      // Create minimal project structure
       Directory('lib').createSync();
       Directory('lib/features').createSync();
 
-      // Create mock pubspec.yaml to avoid warnings
       File('pubspec.yaml').writeAsStringSync('''
 name: test_app
 version: 1.0.0
@@ -33,15 +28,12 @@ dependencies:
     sdk: flutter
 ''');
 
-      // Create .dart_tool to simulate Flutter project
       Directory('.dart_tool').createSync();
     });
 
     tearDown(() {
-      // Restore original working directory
       Directory.current = originalWorkingDir;
 
-      // Clean up temp project
       if (tempProject.existsSync()) {
         tempProject.deleteSync(recursive: true);
       }
@@ -52,7 +44,6 @@ dependencies:
 
       generateFeature('test_feature', config);
 
-      // Check directories were created
       expect(Directory('lib/features/test_feature').existsSync(), true);
       expect(Directory('lib/features/test_feature/data').existsSync(), true);
       expect(Directory('lib/features/test_feature/domain').existsSync(), true);

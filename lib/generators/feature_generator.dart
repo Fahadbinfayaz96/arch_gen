@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'package:arch_gen/generators/core_generator.dart';
-import 'package:arch_gen/utils/naming.dart';
 import 'package:args/args.dart';
-
+import 'package:clean_arch_gen/generators/core_generator.dart';
 import '../internals/config.dart';
 import '../utils/files_utils.dart';
+import '../utils/naming.dart';
 import '../utils/path_resolver.dart';
 import '../utils/pubspec_updater.dart';
 import '../utils/template_engine.dart';

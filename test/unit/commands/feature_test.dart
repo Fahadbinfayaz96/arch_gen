@@ -8,19 +8,13 @@ void main() {
     late String originalWorkingDir;
 
     setUp(() {
-      // Save original working directory
       originalWorkingDir = Directory.current.path;
-
-      // Create temp directory for test isolation
       tempDir = Directory.systemTemp.createTempSync();
       Directory.current = tempDir.path;
-
-      // Create mock project structure
       Directory('lib').createSync();
       Directory('lib/features').createSync();
       Directory('lib/core').createSync();
 
-      // Create a basic pubspec.yaml
       File('pubspec.yaml').writeAsStringSync('''
 name: test_app
 version: 1.0.0
@@ -31,10 +25,8 @@ dependencies:
     });
 
     tearDown(() {
-      // Restore original working directory
       Directory.current = originalWorkingDir;
 
-      // Clean up
       if (tempDir.existsSync()) {
         tempDir.deleteSync(recursive: true);
       }
@@ -55,13 +47,7 @@ dependencies:
     });
 
     test('feature name validation - rejects invalid names', () {
-      final invalidNames = [
-        'Todo', // Starts with uppercase
-        'todo-item', // Contains hyphen
-        '123todo', // Starts with number
-        'todo ', // Contains space
-        '', // Empty
-      ];
+      final invalidNames = ['Todo', 'todo-item', '123todo', 'todo ', ''];
 
       for (var name in invalidNames) {
         final isValid = RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(name);

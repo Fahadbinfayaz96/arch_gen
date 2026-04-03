@@ -8,17 +8,12 @@ void main() {
 
     setUp(() {
       originalWorkingDir = Directory.current.path;
-
-      // Create a temporary Flutter project structure
       tempProject = Directory.systemTemp.createTempSync();
       Directory.current = tempProject.path;
-
-      // Create minimal Flutter project structure
       Directory('lib').createSync();
       Directory('lib/features').createSync();
       Directory('lib/core').createSync();
 
-      // Create a basic pubspec.yaml
       File('pubspec.yaml').writeAsStringSync('''
 name: test_app
 version: 1.0.0
@@ -29,16 +24,13 @@ dependencies:
     sdk: flutter
 ''');
 
-      // Create .dart_tool directory to simulate Flutter project
       Directory('.dart_tool').createSync();
       File('.dart_tool/package_config.json').writeAsStringSync('{}');
     });
 
     tearDown(() {
-      // Restore original working directory
       Directory.current = originalWorkingDir;
 
-      // Clean up
       if (tempProject.existsSync()) {
         tempProject.deleteSync(recursive: true);
       }
@@ -47,14 +39,12 @@ dependencies:
     test('arch_gen feature command creates feature structure', () {
       final featureName = 'test_feature';
 
-      // Create feature directory manually (simulating what arch_gen does)
       final featurePath = 'lib/features/$featureName';
       Directory(featurePath).createSync();
       Directory('$featurePath/data').createSync();
       Directory('$featurePath/domain').createSync();
       Directory('$featurePath/presentation').createSync();
 
-      // Verify structure was created
       expect(Directory(featurePath).existsSync(), true);
       expect(Directory('$featurePath/data').existsSync(), true);
       expect(Directory('$featurePath/domain').existsSync(), true);
@@ -92,7 +82,6 @@ Future<void> init() async {}
     });
 
     test('arch_gen handles missing pubspec.yaml gracefully', () {
-      // Delete pubspec.yaml
       File('pubspec.yaml').deleteSync();
 
       final pubspecExists = File('pubspec.yaml').existsSync();
@@ -127,7 +116,6 @@ Future<void> init() async {}
 
     test('arch_gen creates Riverpod files correctly', () {
       final snakeCase = 'riverpod_test';
-      final pascalCase = 'RiverpodTest';
 
       final providersPath = 'lib/features/$snakeCase/presentation/providers';
       Directory(providersPath).createSync(recursive: true);

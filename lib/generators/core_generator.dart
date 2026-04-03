@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
-import 'package:arch_gen/utils/files_utils.dart';
+
+import '../utils/files_utils.dart';
 
 String getProjectLibPath() {
   final projectRoot = Directory.current.path;

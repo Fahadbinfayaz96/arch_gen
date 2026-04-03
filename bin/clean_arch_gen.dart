@@ -1,5 +1,5 @@
 import 'package:args/args.dart';
-import 'package:arch_gen/commands/feature.dart';
+import 'package:clean_arch_gen/commands/feature.dart';
 
 void main(List<String> arguments) {
   try {
@@ -26,7 +26,6 @@ void main(List<String> arguments) {
 
         final featureName = arguments[1];
 
-        // Validate feature name
         if (featureName.isEmpty ||
             !RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(featureName)) {
           print("❌ Error: Invalid feature name '$featureName'");
@@ -58,7 +57,6 @@ void main(List<String> arguments) {
 
         final results = parser.parse(arguments.skip(2));
 
-        // Prevent using both bloc and riverpod
         if (results['bloc'] == true && results['riverpod'] == true) {
           print("❌ Error: Cannot use both --bloc and --riverpod");
           print("   Choose one state management solution");
@@ -75,7 +73,5 @@ void main(List<String> arguments) {
   } catch (e) {
     print("❌ Unexpected error: $e");
     print("Please report this issue at: [your GitHub issues URL]");
-    // In development, you might want to see the stack trace:
-    // print(e.stackTrace);
   }
 }

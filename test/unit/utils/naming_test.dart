@@ -1,5 +1,5 @@
+import 'package:clean_arch_gen/utils/naming.dart';
 import 'package:test/test.dart';
-import 'package:arch_gen/utils/naming.dart';
 
 void main() {
   group('Naming Conversions', () {
