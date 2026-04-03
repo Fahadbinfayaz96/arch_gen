@@ -1,6 +1,3 @@
-Here's your README.md (copy this):
-markdown
-
 # fd_arch_gen
 
 A Clean Architecture code generator for Flutter that creates complete features with BLoC or Riverpod state management.
@@ -95,6 +92,7 @@ fd_arch_gen feature blog --riverpod
 # 📦 Generated Riverpod files
 # 🔗 DI registered for Blog
 # ✅ Feature 'blog' generated using riverpod
+
 License
 MIT License - see LICENSE file for details
 
