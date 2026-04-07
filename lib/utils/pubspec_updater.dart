@@ -7,8 +7,6 @@ const Map<String, String> packageVersions = {
   'dartz': '^0.10.1',
   'get_it': '^7.6.0',
   'http': '^1.1.0',
-  'hive': '^2.2.3',
-  'hive_flutter': '^1.1.0',
 };
 
 void ensureDependencies(List<String> packages) {
@@ -41,6 +39,7 @@ void ensureDependencies(List<String> packages) {
 
   print("📦 Adding missing dependencies: ${missingPackages.join(', ')}");
 
+  // Add each missing dependency
   for (var pkg in missingPackages) {
     final version = packageVersions[pkg] ?? '^1.0.0';
     final dependencyLine = "  $pkg: $version\n";
@@ -48,19 +47,16 @@ void ensureDependencies(List<String> packages) {
     if (content.contains('dependencies:')) {
       final depsIndex = content.indexOf('dependencies:');
       final afterDeps = content.substring(depsIndex);
-
       final nextSection = RegExp(r'\n\w+_:').firstMatch(afterDeps);
 
       if (nextSection != null) {
         final insertPos = depsIndex + nextSection.start;
-        content =
-            content.substring(0, insertPos) +
+        content = content.substring(0, insertPos) +
             dependencyLine +
             content.substring(insertPos);
       } else {
         final depsEnd = _findDependenciesEnd(content, depsIndex);
-        content =
-            content.substring(0, depsEnd) +
+        content = content.substring(0, depsEnd) +
             dependencyLine +
             content.substring(depsEnd);
       }
@@ -76,16 +72,22 @@ void ensureDependencies(List<String> packages) {
 
   if (updated) {
     pubspecFile.writeAsStringSync(content);
-
     print("📦 Running flutter pub get...");
-    final result = Process.runSync('flutter', ['pub', 'get'], runInShell: true);
 
-    if (result.exitCode == 0) {
+    final processResult = Process.runSync(
+        'flutter',
+        [
+          'pub',
+          'get',
+        ],
+        runInShell: true);
+
+    if (processResult.exitCode == 0) {
       print("✅ Dependencies installed successfully");
     } else {
       print("❌ Failed to run flutter pub get");
-      if (result.stderr.toString().isNotEmpty) {
-        print("   Error: ${result.stderr}");
+      if (processResult.stderr.toString().isNotEmpty) {
+        print("   Error: ${processResult.stderr}");
       }
       print("   You may need to run 'flutter pub get' manually");
     }
@@ -98,7 +100,6 @@ int _findDependenciesEnd(String content, int depsStartIndex) {
 
   for (int i = lineIndex + 1; i < lines.length; i++) {
     final line = lines[i];
-
     if (line.isNotEmpty && !line.startsWith(' ') && !line.startsWith('\t')) {
       int pos = 0;
       for (int j = 0; j < i; j++) {

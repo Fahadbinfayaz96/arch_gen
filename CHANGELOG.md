@@ -1,4 +1,4 @@
-## 1.0.0-beta.1
+## 1.0.0-beta.4
 
 - Initial beta release
 - Support for BLoC and Riverpod state management

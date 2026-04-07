@@ -1,3 +1,14 @@
+/// Generates a complete Clean Architecture feature.
+///
+/// [name] - The feature name (e.g., 'todo', 'user_profile')
+/// [config] - Configuration for state management and options
+///
+/// Creates the following structure:
+/// - data layer (models, datasources, repositories)
+/// - domain layer (entities, repositories, usecases)
+/// - presentation layer (screens, bloc/providers)
+library;
+
 import 'dart:io';
 import 'package:args/args.dart';
 import 'package:fd_arch_gen/generators/core_generator.dart';
@@ -20,7 +31,7 @@ void generateFeature(String name, ArchGenConfig config) {
     ensureDependencies(['flutter_riverpod']);
   }
 
-  ensureDependencies(['dartz', 'get_it', 'http', 'hive', 'hive_flutter']);
+  ensureDependencies(['dartz', 'get_it', 'http']);
 
   generateCore();
   generateDI();
@@ -68,7 +79,15 @@ void generateFeature(String name, ArchGenConfig config) {
 
   registerFeatureDI(feature, snake);
 
-  print("✅ Feature '$name' generated using ${config.stateManagement}");
+  print('''
+✅ Feature '$name' generated using ${config.stateManagement}
+
+🙏 If this tool helped you, please consider:
+⭐ Giving feedback: https://github.com/Fahadbinfayaz96/fd_arch_gen/issues
+📦 Leaving a like on pub.dev
+
+Your feedback helps improve the tool 🚀
+''');
 }
 
 ArchGenConfig mergeFlags(ArchGenConfig config, ArgResults flags) {

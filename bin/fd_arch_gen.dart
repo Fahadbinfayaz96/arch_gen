@@ -1,3 +1,15 @@
+/// A Clean Architecture code generator for Flutter.
+///
+/// This package provides CLI tools to generate features following Clean Architecture
+/// with support for BLoC and Riverpod state management.
+///
+/// ## Usage
+///
+/// ```bash
+/// fd_arch_gen feature todo --bloc
+///
+library;
+
 import 'package:args/args.dart';
 import 'package:fd_arch_gen/commands/feature.dart';
 

@@ -1,7 +1,16 @@
+/// Configuration for the code generator.
+///
+/// Loaded from `arch_gen.yaml` in the project root.
+library;
+
 class ArchGenConfig {
+  /// State management solution: 'bloc' or 'riverpod'
   final String stateManagement;
+
+  /// Whether to use Equatable package with BLoC
   final bool useEquatable;
 
+  /// Creates a new configuration instance.
   ArchGenConfig({required this.stateManagement, required this.useEquatable}) {
     if (stateManagement != 'bloc' && stateManagement != 'riverpod') {
       throw ArgumentError(
