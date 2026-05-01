@@ -1,8 +1,14 @@
 ## 1.0.1
 
-- **Fixed**: Template path resolution for globally installed package
-- **Fixed**: `fd_arch_gen` now correctly locates templates when activated from pub.dev
-- **Improved**: Better error messages when templates are not found
+### 🐛 Fixes
+
+- Template path resolution for globally installed package
+- `fd_arch_gen` now correctly locates templates when activated from pub.dev
+
+### 🔧 Improvements
+
+- Improved template path resolution for better cross-environment support
+- Improved overall CLI stability
 
 ---
 
