@@ -20,7 +20,7 @@ import '../utils/pubspec_updater.dart';
 import '../utils/template_engine.dart';
 import 'di_generator.dart';
 
-void generateFeature(String name, ArchGenConfig config) {
+Future<void> generateFeature(String name, ArchGenConfig config) async {
   if (config.stateManagement == 'bloc') {
     ensureDependencies(['flutter_bloc', 'equatable']);
   } else if (config.stateManagement == 'riverpod') {
@@ -118,22 +118,24 @@ void _generateGetX(
   String feature,
   String snake,
   ArchGenConfig config,
-) {
+) async {
   final getxPath = '$base/presentation/getx';
   Directory(getxPath).createSync(recursive: true);
 
   final controllerTemplate =
-      PathResolver.getTemplatePath('getx/controller.dart.tpl');
+      await PathResolver.getTemplatePath('getx/controller.dart.tpl');
   final controllerVars = {'Feature': feature, 'snake': snake};
-  final controllerContent = renderTemplate(controllerTemplate, controllerVars);
+  final controllerContent =
+      await renderTemplate(controllerTemplate, controllerVars);
   safeWrite('$getxPath/${snake}_controller.dart', controllerContent);
 
-  final bindingTemplate = PathResolver.getTemplatePath('getx/binding.dart.tpl');
-  final bindingContent = renderTemplate(bindingTemplate, controllerVars);
+  final bindingTemplate =
+      await PathResolver.getTemplatePath('getx/binding.dart.tpl');
+  final bindingContent = await renderTemplate(bindingTemplate, controllerVars);
   safeWrite('$getxPath/${snake}_binding.dart', bindingContent);
 
-  final viewTemplate = PathResolver.getTemplatePath('getx/view.dart.tpl');
-  final viewContent = renderTemplate(viewTemplate, controllerVars);
+  final viewTemplate = await PathResolver.getTemplatePath('getx/view.dart.tpl');
+  final viewContent = await renderTemplate(viewTemplate, controllerVars);
   safeWrite('$base/presentation/screens/${snake}_screen.dart', viewContent);
 }
 
@@ -142,20 +144,22 @@ void _generateBloc(
   String feature,
   String snake,
   ArchGenConfig config,
-) {
+) async {
   final blocPath = '$base/presentation/bloc';
 
-  final blocTemplate = PathResolver.getTemplatePath('bloc/bloc.dart.tpl');
+  final blocTemplate = await PathResolver.getTemplatePath('bloc/bloc.dart.tpl');
   final blocVars = {'Feature': feature, 'feature_snake': snake};
-  final blocContent = renderTemplate(blocTemplate, blocVars);
+  final blocContent = await renderTemplate(blocTemplate, blocVars);
   safeWrite('$blocPath/${snake}_bloc.dart', blocContent);
 
-  final eventTemplate = PathResolver.getTemplatePath('bloc/event.dart.tpl');
-  final eventContent = renderTemplate(eventTemplate, blocVars);
+  final eventTemplate =
+      await PathResolver.getTemplatePath('bloc/event.dart.tpl');
+  final eventContent = await renderTemplate(eventTemplate, blocVars);
   safeWrite('$blocPath/${snake}_event.dart', eventContent);
 
-  final stateTemplate = PathResolver.getTemplatePath('bloc/state.dart.tpl');
-  final stateContent = renderTemplate(stateTemplate, blocVars);
+  final stateTemplate =
+      await PathResolver.getTemplatePath('bloc/state.dart.tpl');
+  final stateContent = await renderTemplate(stateTemplate, blocVars);
   safeWrite('$blocPath/${snake}_state.dart', stateContent);
 }
 
@@ -164,15 +168,15 @@ void _generateRiverpod(
   String feature,
   String snake,
   ArchGenConfig config,
-) {
-  final templatePath = PathResolver.getTemplatePath(
+) async {
+  final templatePath = await PathResolver.getTemplatePath(
     'riverpod/provider.dart.tpl',
   );
   final outputPath = '$base/presentation/providers/${snake}_provider.dart';
 
   final vars = {'Feature': feature, 'snake': snake};
 
-  final content = renderTemplate(templatePath, vars);
+  final content = await renderTemplate(templatePath, vars);
   safeWrite(outputPath, content);
 }
 
@@ -181,21 +185,23 @@ void _generateCubit(
   String feature,
   String snake,
   ArchGenConfig config,
-) {
+) async {
   final cubitPath = '$base/presentation/cubit';
   Directory(cubitPath).createSync(recursive: true);
 
-  final cubitTemplate = PathResolver.getTemplatePath('cubit/cubit.dart.tpl');
+  final cubitTemplate =
+      await PathResolver.getTemplatePath('cubit/cubit.dart.tpl');
   final cubitVars = {
     'Feature': feature,
     'feature_snake': snake,
     'useEquatable': 'true',
   };
-  final cubitContent = renderTemplate(cubitTemplate, cubitVars);
+  final cubitContent = await renderTemplate(cubitTemplate, cubitVars);
   safeWrite('$cubitPath/${snake}_cubit.dart', cubitContent);
 
-  final stateTemplate = PathResolver.getTemplatePath('cubit/state.dart.tpl');
-  final stateContent = renderTemplate(stateTemplate, cubitVars);
+  final stateTemplate =
+      await PathResolver.getTemplatePath('cubit/state.dart.tpl');
+  final stateContent = await renderTemplate(stateTemplate, cubitVars);
   safeWrite('$cubitPath/${snake}_state.dart', stateContent);
 }
 
@@ -204,75 +210,80 @@ void _generateScreen(
   String feature,
   String snake,
   ArchGenConfig config,
-) {
+) async {
   final screenPath = '$base/presentation/screens';
 
   String templatePath;
   if (config.stateManagement == 'bloc') {
-    templatePath = PathResolver.getTemplatePath('screen/bloc_screen.dart.tpl');
+    templatePath =
+        await PathResolver.getTemplatePath('screen/bloc_screen.dart.tpl');
   } else if (config.stateManagement == 'riverpod') {
-    templatePath = PathResolver.getTemplatePath(
+    templatePath = await PathResolver.getTemplatePath(
       'screen/riverpod_screen.dart.tpl',
     );
   } else if (config.stateManagement == 'cubit') {
-    templatePath = PathResolver.getTemplatePath('screen/cubit_screen.dart.tpl');
+    templatePath =
+        await PathResolver.getTemplatePath('screen/cubit_screen.dart.tpl');
   } else if (config.stateManagement == 'getx') {
     return;
   } else {
     templatePath =
-        PathResolver.getTemplatePath('screen/riverpod_screen.dart.tpl');
+        await PathResolver.getTemplatePath('screen/riverpod_screen.dart.tpl');
   }
 
   final vars = {'Feature': feature, 'snake': snake};
-  final content = renderTemplate(templatePath, vars);
+  final content = await renderTemplate(templatePath, vars);
   safeWrite('$screenPath/${snake}_screen.dart', content);
 }
 
-void _generateUsecase(String base, String feature, String snake) {
-  final templatePath = PathResolver.getTemplatePath('usecase.dart.tpl');
+void _generateUsecase(String base, String feature, String snake) async {
+  final templatePath = await PathResolver.getTemplatePath('usecase.dart.tpl');
   final outputPath = '$base/domain/usecases/${snake}_usecase.dart';
   final vars = {'Feature': feature, 'snake': snake};
-  final content = renderTemplate(templatePath, vars);
+  final content = await renderTemplate(templatePath, vars);
   safeWrite(outputPath, content);
 }
 
-void _generateRepository(String base, String feature, String snake) {
-  final templatePath = PathResolver.getTemplatePath('repository.dart.tpl');
+void _generateRepository(String base, String feature, String snake) async {
+  final templatePath =
+      await PathResolver.getTemplatePath('repository.dart.tpl');
   final outputPath = '$base/domain/repositories/${snake}_repository.dart';
   final vars = {'Feature': feature, 'snake': snake};
-  final content = renderTemplate(templatePath, vars);
+  final content = await renderTemplate(templatePath, vars);
   safeWrite(outputPath, content);
 }
 
-void _generateDatasource(String base, String feature, String snake) {
-  final templatePath = PathResolver.getTemplatePath('datasource.dart.tpl');
+void _generateDatasource(String base, String feature, String snake) async {
+  final templatePath =
+      await PathResolver.getTemplatePath('datasource.dart.tpl');
   final outputPath = '$base/data/datasources/${snake}_remote_datasource.dart';
   final vars = {'Feature': feature, 'snake': snake};
-  final content = renderTemplate(templatePath, vars);
+  final content = await renderTemplate(templatePath, vars);
   safeWrite(outputPath, content);
 }
 
-void _generateRepositoryImpl(String base, String feature, String snake) {
-  final templatePath = PathResolver.getTemplatePath('repository_impl.dart.tpl');
+void _generateRepositoryImpl(String base, String feature, String snake) async {
+  final templatePath =
+      await PathResolver.getTemplatePath('repository_impl.dart.tpl');
   final outputPath =
       '$base/data/repositories_impl/${snake}_repository_impl.dart';
   final vars = {'Feature': feature, 'snake': snake};
-  final content = renderTemplate(templatePath, vars);
+  final content = await renderTemplate(templatePath, vars);
   safeWrite(outputPath, content);
 }
 
-void _generateEntity(String base, String feature, String snake) {
-  final templatePath = PathResolver.getTemplatePath('entity.dart.tpl');
+void _generateEntity(String base, String feature, String snake) async {
+  final templatePath = await PathResolver.getTemplatePath('entity.dart.tpl');
   final outputPath = '$base/domain/entities/${snake}_entity.dart';
   final vars = {'Feature': feature, 'snake': snake};
-  final content = renderTemplate(templatePath, vars);
+  final content = await renderTemplate(templatePath, vars);
   safeWrite(outputPath, content);
 }
 
-void _generateModel(String base, String feature, String snake) {
-  final templatePath = PathResolver.getTemplatePath('model.dart.tpl');
+void _generateModel(String base, String feature, String snake) async {
+  final templatePath = await PathResolver.getTemplatePath('model.dart.tpl');
   final outputPath = '$base/data/models/${snake}_model.dart';
   final vars = {'Feature': feature, 'snake': snake};
-  final content = renderTemplate(templatePath, vars);
+  final content = await renderTemplate(templatePath, vars);
   safeWrite(outputPath, content);
 }

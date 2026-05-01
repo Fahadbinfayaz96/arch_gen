@@ -1,15 +1,18 @@
 import 'dart:io';
 import 'path_resolver.dart';
 
-String renderTemplate(String templatePath, Map<String, String> vars) {
-  final fullPath = PathResolver.getTemplatePath(templatePath);
+Future<String> renderTemplate(
+  String templatePath,
+  Map<String, String> vars,
+) async {
+  final fullPath = await PathResolver.getTemplatePath(templatePath);
   final file = File(fullPath);
 
   if (!file.existsSync()) {
     throw Exception('Template not found: $templatePath');
   }
 
-  String content = file.readAsStringSync();
+  String content = await file.readAsString();
 
   for (final entry in vars.entries) {
     final key = entry.key;
@@ -31,8 +34,11 @@ String _escapeForReplacement(String value) {
   return value.replaceAll(r'\', r'\\').replaceAll(r'$', r'\$');
 }
 
-String renderTemplateAdvanced(String templatePath, Map<String, dynamic> vars) {
-  String content = renderTemplate(
+Future<String> renderTemplateAdvanced(
+  String templatePath,
+  Map<String, dynamic> vars,
+) async {
+  String content = await renderTemplate(
     templatePath,
     vars.map((k, v) => MapEntry(k, v.toString())),
   );
@@ -41,6 +47,7 @@ String renderTemplateAdvanced(String templatePath, Map<String, dynamic> vars) {
     r'\{%\s*if\s+(\w+)\s*%\}(.*?)\{%\s*endif\s*%\}',
     multiLine: true,
   );
+
   content = content.replaceAllMapped(ifPattern, (match) {
     final conditionVar = match.group(1)!;
     final block = match.group(2)!;
@@ -51,6 +58,7 @@ String renderTemplateAdvanced(String templatePath, Map<String, dynamic> vars) {
     r'\{%\s*for\s+(\w+)\s+in\s+(\w+)\s*%\}(.*?)\{%\s*endfor\s*%\}',
     multiLine: true,
   );
+
   content = content.replaceAllMapped(forPattern, (match) {
     final itemVar = match.group(1)!;
     final collectionVar = match.group(2)!;
@@ -59,19 +67,19 @@ String renderTemplateAdvanced(String templatePath, Map<String, dynamic> vars) {
     final collection = vars[collectionVar];
     if (collection is! List) return '';
 
-    return collection
-        .map((item) {
-          final localVars = {...vars, itemVar: item};
-          String result = block;
-          for (final entry in localVars.entries) {
-            result = result.replaceAll(
-              '{{${entry.key}}}',
-              entry.value.toString(),
-            );
-          }
-          return result;
-        })
-        .join('');
+    return collection.map((item) {
+      final localVars = {...vars, itemVar: item};
+      String result = block;
+
+      for (final entry in localVars.entries) {
+        result = result.replaceAll(
+          '{{${entry.key}}}',
+          entry.value.toString(),
+        );
+      }
+
+      return result;
+    }).join('');
   });
 
   return content;

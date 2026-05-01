@@ -1,39 +1,20 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'package:path/path.dart' as path;
 
 class PathResolver {
-  static String getTemplatePath(String relativePath) {
-    final script = Platform.script.toFilePath();
+  static Future<String> getTemplatePath(String relativePath) async {
+    final uri = await Isolate.resolvePackageUri(
+      Uri.parse('package:fd_arch_gen/'),
+    );
 
-    String? packageRoot;
-    final scriptDir = File(script).parent;
-
-    final searchPaths = [
-      scriptDir.path,
-      Directory.current.path,
-    ];
-
-    for (var startPath in searchPaths) {
-      var dir = Directory(startPath);
-
-      for (int i = 0; i < 10; i++) {
-        final templatesDir = path.join(dir.path, 'lib', 'templates');
-        if (Directory(templatesDir).existsSync()) {
-          packageRoot = dir.path;
-          break;
-        }
-        if (dir.path == dir.parent.path) break;
-        dir = dir.parent;
-      }
-      if (packageRoot != null) break;
+    if (uri == null) {
+      throw Exception('Could not resolve fd_arch_gen package');
     }
 
-    if (packageRoot == null) {
-      throw Exception('Could not find fd_arch_gen package root');
-    }
+    final packageRoot = Directory.fromUri(uri).path;
 
-    final templatePath =
-        path.join(packageRoot, 'lib', 'templates', relativePath);
+    final templatePath = path.join(packageRoot, 'templates', relativePath);
 
     if (!File(templatePath).existsSync()) {
       throw Exception('Template not found: $relativePath');
