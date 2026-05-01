@@ -7,10 +7,9 @@ class PathResolver {
 
     final possiblePaths = [
       path.join(Directory.current.path, 'lib', 'templates', relativePath),
-
       path.join(scriptDir.path, 'lib', 'templates', relativePath),
-
       path.join(scriptDir.parent.parent.path, 'lib', 'templates', relativePath),
+      path.join(scriptDir.path, '..', 'lib', 'templates', relativePath),
     ];
 
     for (final templatePath in possiblePaths) {
